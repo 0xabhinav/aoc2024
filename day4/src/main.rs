@@ -13,10 +13,10 @@ enum Direction {
 struct NextChar {
     x_idx: usize,
     y_idx: usize,
-    char: char,
+    char: u8,
 }
 
-fn get_next_char<'a>(vec_str: &'a Vec<String>, x_idx: usize, y_idx: usize, direction: &Direction, reverse: bool) -> Option<NextChar> {
+fn get_next_char<'a>(vec_str: &'a Vec<&[u8]>, x_idx: usize, y_idx: usize, direction: &Direction, reverse: bool) -> Option<NextChar> {
     let mut dx;
     let mut dy;
     match direction {
@@ -49,22 +49,22 @@ fn get_next_char<'a>(vec_str: &'a Vec<String>, x_idx: usize, y_idx: usize, direc
     return Some(NextChar {
         x_idx: x_idx as usize,
         y_idx: y_idx as usize,
-        char: vec_str[x_idx as usize].chars().nth(y_idx as usize).unwrap(),
+        char: vec_str[x_idx as usize][y_idx as usize],
     });
 }
 
-const CHARS_TO_MATCH: &str = "XMAS";
+const CHARS_TO_MATCH: &[u8] = b"XMAS";
 
-fn solve_part(vec_str: &Vec<String>, direction: &Direction, reverse: bool) -> u128 {
+fn solve_part(vec_str: &Vec<&[u8]>, direction: &Direction, reverse: bool) -> u128 {
     // println!("direction: {:?}, reverse: {}", direction, reverse);
     let mut ans = 0;
     for i in 0..vec_str.len() {
         for j in 0..vec_str[0].len() {
             let mut x_idx = i;
             let mut y_idx = j;
-            let mut next_char = vec_str[x_idx].chars().nth(y_idx).unwrap();
-            for (idx, c) in CHARS_TO_MATCH.chars().enumerate() {
-                if next_char != c {
+            let mut next_char = vec_str[x_idx][y_idx];
+            for (idx, c) in CHARS_TO_MATCH.iter().enumerate() {
+                if next_char != *c {
                     break;
                 }
                 if idx == 3 {
@@ -80,7 +80,7 @@ fn solve_part(vec_str: &Vec<String>, direction: &Direction, reverse: bool) -> u1
                 }
             }
             // Subset variation
-            // if vec_str[i].chars().nth(j as usize).unwrap() != 'X' {
+            // if vec_str[i][j as usize] != b'X' {
             //     continue;
             // }
             // let mut counts = [0; 4];
@@ -90,15 +90,15 @@ fn solve_part(vec_str: &Vec<String>, direction: &Direction, reverse: bool) -> u1
             //     y_idx = next_char.y_idx;
 
                 
-            //     for (idx, c) in CHARS_TO_MATCH.chars().skip(1).enumerate() {
-            //         if next_char.char == c {
+            //     for (idx, c) in CHARS_TO_MATCH.iter().skip(1).enumerate() {
+            //         if next_char.char == *c {
             //             counts[idx + 1] += counts[idx];
             //         }
             //     }
             // }
-            // if counts[3] > 0 {
-            //     println!("{},{}: {}", i, j, counts[3]);
-            // }
+            // // if counts[3] > 0 {
+            // //     println!("{},{}: {}", i, j, counts[3]);
+            // // }
             // ans += counts[3];
         }
 
@@ -114,8 +114,15 @@ fn solve(file: File) -> u128 {
         Direction::Diagonal,
         Direction::InvertedDiagonal,
     ];
-    let lines = std::io::BufReader::new(file).lines();
-    let lines_vec: Vec<String> = lines.map(|l| l.unwrap()).collect();
+
+    let mut buf = Vec::new();
+    std::io::BufReader::new(file).read_to_end(&mut buf).unwrap();
+    
+    // Convert directly to Vec<&[u8]>
+    let lines_vec: Vec<&[u8]> = buf
+        .split(|&b| b == b'\n')
+        .collect();
+
     for direction in choices {
         ans += solve_part(&lines_vec, &direction, false);
         ans += solve_part(&lines_vec, &direction, true);
