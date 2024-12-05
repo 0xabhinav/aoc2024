@@ -30,12 +30,10 @@ fn solve(file: File) -> u128 {
         let nums: Vec<u64> = line.split('|').map(|s| s.parse().unwrap()).collect();
         pairs.push((nums[0], nums[1]));
     }
-    // Collect remaining lines into a vector
-    let remaining_lines: Vec<_> = lines.collect::<Result<Vec<_>, _>>().unwrap();
 
-    for line in remaining_lines {
+    while let Some(line) = lines.by_ref().next() {
         // parse comma separated numbers
-        let mut nums: Vec<u64> = line.split(',').map(|s| s.parse().unwrap()).collect();
+        let mut nums: Vec<u64> = line.unwrap().split(',').map(|s| s.parse().unwrap()).collect();
         if is_valid(&nums, &pairs) {
             continue;
         }
