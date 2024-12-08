@@ -11,8 +11,8 @@ fn solve_one(idxs: &Vec<(i64, i64)>, max_x: i64, max_y: i64, antinode_locs: &mut
             if dx == 0 && dy == 0 {
                 continue;
             }
-            let mut x3 = *x;
-            let mut y3 = *y;
+            let mut x3 = *x2;
+            let mut y3 = *y2;
             loop {
                 x3 = x3 + dx;
                 y3 = y3 + dy;
@@ -40,7 +40,6 @@ fn solve(file: File) -> i128 {
         for (j, ch) in line.chars().enumerate() {
             if (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9') {
                 antenna_idxs.entry(ch).or_insert(Vec::new()).push((i as i64, j as i64));
-                antinode_locs.insert((i as i64, j as i64));
             }
             max_y = max_y.max(j as i64);
         }
