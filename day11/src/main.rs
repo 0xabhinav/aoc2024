@@ -45,7 +45,7 @@ fn solve(file: File) -> u128 {
     let parts = line.split_whitespace().map(|s| s.parse::<u128>().unwrap());
     let mut memo = HashMap::<(u128, u128), u128>::new();
     for element in parts {
-        ans += solve_one(element, 75, &mut memo);
+        ans += solve_one(element, 25, &mut memo);
     }
     ans
 }
