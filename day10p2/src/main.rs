@@ -1,7 +1,7 @@
 use std::fs::File;
 use std::io::prelude::*;
 use std::time::Instant;
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 
 fn solve(file: File) -> i128 {
     let mut ans = 0;
